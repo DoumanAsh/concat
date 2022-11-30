@@ -13,6 +13,12 @@ TEST_CASE("try simple concat") {
     REQUIRE(result.str() == "test=1");
 }
 
+TEST_CASE("try joined concat") {
+    std::stringstream result;
+    result << concat::concat("test", '=', 1).join(" ");
+    REQUIRE(result.str() == "test = 1");
+}
+
 TEST_CASE("try from lvalue tuple") {
     std::stringstream result;
     auto res = std::make_tuple("test", '=', 1);
