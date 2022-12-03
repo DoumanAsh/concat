@@ -7,10 +7,17 @@
 
 #include <concat.hpp>
 
+struct Lolka {};
+
+inline std::ostream& operator<<(std::ostream& out, const Lolka&) {
+    out << "lolka";
+    return out;
+}
+
 TEST_CASE("try simple concat") {
     std::stringstream result;
-    result << concat::concat("test", '=', 1);
-    REQUIRE(result.str() == "test=1");
+    result << concat::concat("test", '=', concat::concat(Lolka()).quote('"').quote("-"));
+    REQUIRE(result.str() == "test=-\"lolka\"-");
 }
 
 TEST_CASE("try joined concat") {

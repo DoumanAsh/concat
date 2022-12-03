@@ -32,10 +32,14 @@ namespace detail {
         return std::tuple_cat(std::make_tuple(std::forward<Arg>(arg), sep), tuple_join_by(sep, std::forward<Args>(args)...));
     }
 
-    template<class Tuple, class Function, std::size_t... Index>
-    inline void tuple_for_each(std::index_sequence<Index...>, const Tuple& tuple, Function&& function) {
+    template<class Tuple, class Writer, std::size_t... Index>
+    inline void tuple_for_each(std::index_sequence<Index...>, const Tuple& tuple, Writer&& iostream_writer) {
         (void)(none[]){
-            (void(function(std::get<Index>(tuple))),
+            (void(
+                   /* requires operator<<(std::ostream&, const T&) */ iostream_writer(
+                      std::get<Index>(tuple)
+                  )
+            ),
             none())...
         };
     }
@@ -83,6 +87,12 @@ class Concat {
             noexcept(std::is_nothrow_copy_constructible<std::tuple<Args...>>::value)
             : args(args) {}
 
+        ///Wraps around this with `quote`.
+        template <class QUOTE>
+        inline constexpr auto quote(QUOTE quote) && {
+            return concat(std::tuple_cat(std::tuple<QUOTE>(quote), std::move(this->args), std::tuple<QUOTE>(quote)));
+        }
+
         ///Performs join onto concatenated list by inserting copy of `sep` between every argument
         template <class SEP>
         inline constexpr auto join(SEP sep) && {
@@ -91,7 +101,7 @@ class Concat {
 
         ///Writes arguments onto `out` stream.`
         inline std::ostream& write(std::ostream& out) const {
-            detail::tuple_for_each(this->args, detail::StreamWriter(out)); /* requires operator<<(std::ostream&, const T&) */
+            detail::tuple_for_each(this->args, detail::StreamWriter(out));
             return out;
         }
 };
