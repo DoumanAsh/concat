@@ -11,7 +11,7 @@ namespace detail {
 
     struct StreamWriter {
         std::ostream& out;
-        inline constexpr StreamWriter(std::ostream& out) noexcept : out(out) {}
+        inline explicit constexpr StreamWriter(std::ostream& out) noexcept : out(out) {}
 
         template <typename Arg>
         inline auto operator()(const Arg& arg) -> decltype((out << arg), none()) {
@@ -33,7 +33,7 @@ namespace detail {
     }
 
     template<class Tuple, class Writer, std::size_t... Index>
-    inline void tuple_for_each(std::index_sequence<Index...>, const Tuple& tuple, Writer&& iostream_writer) {
+    inline void tuple_for_each(std::index_sequence<Index...> /*unused*/, const Tuple& tuple, Writer&& iostream_writer) {
         (void)(none[]){
             (void(
                    /* requires operator<<(std::ostream&, const T&) */ iostream_writer(
