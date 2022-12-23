@@ -1,0 +1,37 @@
+name: Rust
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/test.yml'
+      - 'lib/**'
+      - 'tests/**'
+      - 'CMakeCache.txt'
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - '**'
+    paths:
+      - '.github/workflows/test.yml'
+      - 'lib/**'
+      - 'tests/**'
+      - 'CMakeCache.txt'
+
+jobs:
+  full-test:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cmake
+      run: mkdir build && cd build && cmake ../ -DUNIT_TEST=on
+
+    - name: Build
+      run: cmake --build build/
+
+    - name: Run tests
+      run: build/dist/bin/utest
