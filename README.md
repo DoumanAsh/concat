@@ -1,5 +1,5 @@
 # concat
 
-[![Build Status](https://travis-ci.org/DoumanAsh/concat.svg?branch=master)](https://travis-ci.org/DoumanAsh/concat)
+[![Build status](https://github.com/DoumanAsh/concat/actions/workflows/test.yml/badge.svg)](https://github.com/DoumanAsh/concat/actions/workflows/test.yml)
 
 plainly simple concat function
