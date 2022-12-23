@@ -1,4 +1,4 @@
-name: Rust
+name: Test
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     paths:
       - '.github/workflows/test.yml'
       - 'lib/**'
-      - 'tests/**'
+      - 'test/**'
       - 'CMakeCache.txt'
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
@@ -16,11 +16,11 @@ on:
     paths:
       - '.github/workflows/test.yml'
       - 'lib/**'
-      - 'tests/**'
+      - 'test/**'
       - 'CMakeCache.txt'
 
 jobs:
-  full-test:
+  test:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
 
