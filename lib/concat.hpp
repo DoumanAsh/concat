@@ -7,16 +7,16 @@
 namespace concat {
 
 namespace detail {
-    struct none {};
+    struct None {};
 
     struct StreamWriter {
         std::ostream& out;
         inline explicit constexpr StreamWriter(std::ostream& out) noexcept : out(out) {}
 
         template <typename Arg>
-        inline auto operator()(const Arg& arg) -> decltype((out << arg), none()) {
+        inline auto operator()(const Arg& arg) -> decltype((out << arg), None()) {
             out << arg;
-            return none();
+            return None();
         }
     };
 
@@ -34,14 +34,15 @@ namespace detail {
 
     template<class Tuple, class Writer, std::size_t... Index>
     inline void tuple_for_each(std::index_sequence<Index...> /*unused*/, const Tuple& tuple, Writer&& iostream_writer) {
-        (void)(none[]){
-            (void(
-                   /* requires operator<<(std::ostream&, const T&) */ iostream_writer(
-                      std::get<Index>(tuple)
-                  )
-            ),
-            none())...
+        //C++17 would be just
+        //(iostream_writer(std::get<Index>(tuple)), ...);
+
+        None ret[] = {
+            /* requires operator<<(std::ostream&, const T&) */ iostream_writer(
+                std::get<Index>(tuple)
+            )...
         };
+        (void)(ret);
     }
 
     template<class Tuple, class Function>
@@ -79,7 +80,7 @@ class Concat {
     std::tuple<Args...> args;
 
     public:
-        inline constexpr Concat(Args&&... args) : args(std::forward<Args>(args)...) {}
+        inline constexpr explicit Concat(Args&&... args) : args(std::forward<Args>(args)...) {}
         inline constexpr explicit Concat(std::tuple<Args...>&& args)
             noexcept(std::is_nothrow_move_constructible<std::tuple<Args...>>::value)
             : args(std::forward<decltype(args)>(args)) {}

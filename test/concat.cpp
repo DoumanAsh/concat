@@ -9,7 +9,8 @@
 
 struct Lolka {};
 
-inline std::ostream& operator<<(std::ostream& out, const Lolka&) {
+inline std::ostream& operator<<(std::ostream& out, const Lolka& lolka) {
+    (void)(lolka);
     out << "lolka";
     return out;
 }
